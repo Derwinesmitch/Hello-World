@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, TouchableOpacity, ImageBackground} from 'react-native';
 
 
@@ -19,7 +19,7 @@ export default class Start extends React.Component {
           <View style={styles.box1}>
             <TextInput style={styles.input}
               placeholder='Name'
-              value={thos.state.name}
+              value={this.state.name}
               onChangeText={(name) => this.setState({ name })} />
           <View style={styles.colorWrapper}>
             <Text>Choose your color!</Text>
