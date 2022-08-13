@@ -12,14 +12,12 @@ import Chat from './components/Chat';
 const Stack = createStackNavigator();
 
 export default class App extends Component{
-
 render() {
     return (
-      <NavigationContainer>
-        
+      <NavigationContainer>       
         <Stack.Navigator
           initialRouteName="Start"
-        >
+          >
           <Stack.Screen
             name="Start"
             component={Start}

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, TouchableOpacity, ImageBackground} from 'react-native';
+import { View, Text, StyleSheet, TextInput, ImageBackground, Button } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-
-export default class Start extends React.Component {
+export default class Start extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,16 +14,16 @@ export default class Start extends React.Component {
   render() {
     return (
       <View styles={styles.container}>
-        <ImageBackground>
+        <ImageBackground source={require('../assets/BackgroundImage.png')} style={styles.image}>
           <Text style={styles.title}>Title</Text>
-          <View style={styles.box1}>
-            <TextInput style={styles.input}
+          <View style={styles.box}>
+            <TextInput style={styles.textStuff}
               placeholder='Name'
               value={this.state.name}
               onChangeText={(name) => this.setState({ name })} />
           <View style={styles.colorWrapper}>
-            <Text>Choose your color!</Text>
-            <View>
+            <Text style={styles.textStuff}>Choose your color!</Text>
+            <View style={styles.colors}>
               <TouchableOpacity style={[styles.color, styles.color1]} onPress={() => this.setState ({ color: '#AB2328' })} />
               <TouchableOpacity style={[styles.color, styles.color2]} onPress={() => this.setState ({ color: '#FFB81C' })} />
               <TouchableOpacity style={[styles.color, styles.color3]} onPress={() => this.setState ({ color: '#66FFFF' })} />
@@ -32,7 +32,7 @@ export default class Start extends React.Component {
           </View>
           <View style={styles.buttonWrapper}>
             <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, color: this.state.color})}>
-              <Text style={styles.buttontText}>Go to Chat</Text>
+              <Text style={styles.buttontext}>Go to Chat</Text>
             </TouchableOpacity>
           </View>
           </View>
@@ -48,23 +48,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    flex: 1,
+    // flex: 1,
     resizeMode: 'cover',
     flexDirection: 'column',
     alignItems: 'center',
   },
   title: {
-    flex: 1,
+    // flex: 1,
     padding: '30%',
     fontSize: 30,
-    fontWeight: 500,
-    color: '',
+    color: '#007B5F',
   },
-  box1: {
-    flex: 1,
-    width: '70%',
-    height: '30%',
-    backgroundColor: '#DDFFCC',
+  box: {
+    // flex: 1,
+    width: '80%',
+    height: '40%',
+    // backgroundColor: '#DDFFCC',
     marginBottom: '10%',
     paddingTop: '10%',
     paddingBottom: '6%',
@@ -72,23 +71,23 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '80%',
-    padding: '3%',
-    height: 40,
+    padding: '2%',
+    height: 30,
     borderColor: 'red',
-    borderWidth: 3,
-    borderRadius: 3,
+    borderWidth: 2,
+    borderRadius: 2,
   },
   colorWrapper: {
-    width: '70%',
-    height: '30%',
-    justifyContent: 'center',
+    width: '60%',
+    height: '50%',
+    // justifyContent: 'center',
     marginLeft: '5%',
   },
   colors: {
     flexDirection: 'row',
   },
   color: {
-    borderRadius: '30%',
+    // borderRadius: '2',
     width: 35,
     height: 35,
   },
@@ -105,16 +104,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#66FF66',
   },
   button: {
-    height: '30%',
-    width: '70%',
+    height: 50,
+    width: '80%',
     backgroundColor: '#F0F0FF',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 3,
+    borderRadius: 2,
   },
   buttontext: {
     color: '#00664D',
-    fontSize: 12,
-    fontWeight: 500,
+    fontSize: 16,
   },
-})
+  textStuff: {
+    fontSize: 15,
+    fontWeight: 'normal',
+    color: '#0f0e0f',
+  },
+  buttonWrapper: {
+    width: '88%',
+    flex: 1,
+  },
+})  

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, View, Text, ImageBackground, TextInput, Button } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TextInput, Button } from 'react-native';
 
 
-export default class Chat extends React.Component {
-    componentDidMount(){
+export default class Chat extends Component {
+    componentDidMount() {
         let { name } = this.props.route.params;
         this.props.navigation.setOptions({ title: name });
     }
@@ -12,11 +12,23 @@ export default class Chat extends React.Component {
       const { color } = this.props.route.params;
 
         return (
-          <ScrollView style={{ backgroundColor: color}}>
+          <ScrollView style={{ backgroundColor: color }}>
             <View style={styles.container}>
-              <Text style={styles.text}>Chat</Text>
+              <Text style={styles.text}>Hi Chat</Text>
             </View>
           </ScrollView>
         );
     }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    color: '#a1278c',
+  },
+})
