@@ -57,7 +57,9 @@ export default class Chat extends React.Component {
         messages,
       });
     };
+    
     async saveMessages() {
+      
       try {
         await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
       } catch (error) {
@@ -93,7 +95,7 @@ export default class Chat extends React.Component {
 
     componentDidMount() {
         // this.deleteMessages();
-        this.getMessages();
+        // this.getMessages();
         let { name } = this.props.route.params;
         this.props.navigation.setOptions({ title: name });
 
@@ -102,41 +104,45 @@ export default class Chat extends React.Component {
            this.setState({
             isConnected: true,
            });
-          } else
+            this.referenceChatMesssages = firebase.firestore().collection('messages');
+            this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+              if (!user) {
+                firebase.auth().signInAnonymously();
+              }
+            this.setState({
+                uid: user.uid,
+                messages: [],
+                user: {
+                  _id: user.uid,
+                  name: name,
+                },
+              });
+            this.unsubscribe = this.referenceChatMessages
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(this.onCollectionUpdate);
+            });                     
+          } else {
             this.setState({
               isConnected: false,
-            });
+            }); 
+            this.getMessages();
+          }
         });
-
-        if (this.state.isConnected === true) {
-          this.referenceChatMesssages = firebase.firestore().collection('messages');
+      }
+    //     if (this.state.isConnected === true) {
         
-          this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-              firebase.auth().signInAnonymously();
-            }
-            this.setState({
-              uid: user.uid,
-              messages: [],
-              user: {
-                _id: user.uid,
-                name: name,
-               },
-          });
-            this.unsubscribe = this.referenceChatMessages
-              .orderBy('createdAt', 'desc')
-              .onSnapshot(this.onCollectionUpdate);
-        });      
-    } 
+
+    // } 
     // else {
     //   this.getMessages();
     // }
-}
+// }
 
 
     componentWillUnmount() {
-      if (this.isConnected === false) {
+      if (this.isConnected) {
         this.unsubscribe();
+        this.authUnsubscribe();
       }
     }
 
@@ -165,7 +171,7 @@ export default class Chat extends React.Component {
         createdAt: message.createdAt,
         user: message.user,
       });
-    }       ; 
+    }; 
 
 
 
@@ -181,11 +187,11 @@ export default class Chat extends React.Component {
               }
             }}
             />
-        )
+        );
       }
 
 
-      renderInputTollbar(props) {
+      renderInputToolbar(props) {
         if (this.state.isConnected === false){
         } else {
           return <InputToolbar {...props} />;
