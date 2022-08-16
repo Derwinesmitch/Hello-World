@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, View, Text, TextInput, Button, Platform, Keyboa
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from '@react-native-community/netinfo';
-import "react-native-url-polyfill/auto"
+
 const firebase = require('firebase');
 require('firebase/firestore');
 
@@ -39,25 +39,32 @@ export default class Chat extends React.Component {
 
   } 
 
-    // onCollectionUpdate = (querySnapshot) => {
-    //   const messages = [];
-    //   querySnapshot.forEach((doc) => {
-    //     let data = doc.data();
-    //     messages.push({
-    //       _id: data._id,
-    //       text: data.text,
-    //       createdAt: data.createdAt.toDate(),
-    //       user: {
-    //         _id: data.user._id,
-    //         name: data.user.name,
-    //       },
-    //     });
-    //   });
-    //   this.setState({
-    //     messages,
-    //   });
-    // };
-
+    onCollectionUpdate = (querySnapshot) => {
+      const messages = [];
+      querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        messages.push({
+          _id: data._id,
+          text: data.text,
+          createdAt: data.createdAt.toDate(),
+          user: {
+            _id: data.user._id,
+            name: data.user.name,
+          },
+        });
+      });
+      this.setState({
+        messages,
+      });
+    };
+    async saveMessages() {
+      try {
+        await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    
     async getMessages() { 
       let messages = '';
       try { 
@@ -70,13 +77,7 @@ export default class Chat extends React.Component {
       }
     };
 
-    async saveMessages() {
-      try {
-        await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
+
 
     async deleteMessages() {
       try {
@@ -91,7 +92,8 @@ export default class Chat extends React.Component {
 
 
     componentDidMount() {
-        this.deleteMessages();
+        // this.deleteMessages();
+        this.getMessages();
         let { name } = this.props.route.params;
         this.props.navigation.setOptions({ title: name });
 
@@ -125,9 +127,10 @@ export default class Chat extends React.Component {
               .orderBy('createdAt', 'desc')
               .onSnapshot(this.onCollectionUpdate);
         });      
-    } else {
-      this.getMessages();
-    }
+    } 
+    // else {
+    //   this.getMessages();
+    // }
 }
 
 
@@ -144,7 +147,6 @@ export default class Chat extends React.Component {
         messages: GiftedChat.append(previousState.messages, messages),
         }),
           () => {
-            // this.addMessages(this.state.messages[0]);
             this.saveMessages();
             if (this.state.isConnected === true){
               this.addMessages(this.state.messages[0]);
@@ -198,7 +200,7 @@ export default class Chat extends React.Component {
           <View style={[{ backgroundColor: color }, styles.outerView ]}>            
             <GiftedChat
               renderBubble={this.renderBubble.bind(this)}
-              // renderInputToolbar={this.renderInputToolbar.bind(this)}
+              renderInputToolbar={this.renderInputToolbar.bind(this)}
               messages={this.state.messages}
               onSend={(messages) => this.onSend(messages)}
               user={{
