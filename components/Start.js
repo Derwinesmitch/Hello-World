@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TextInput, ImageBackground, Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
-export default class Start extends Component {
+export default class Start extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

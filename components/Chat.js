@@ -3,7 +3,8 @@ import { StyleSheet, ScrollView, View, Text, TextInput, Button, Platform, Keyboa
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from '@react-native-community/netinfo';
-
+import CustomActions from './CustomActions';
+import MapView from  'react-native-maps';
 const firebase = require('firebase');
 require('firebase/firestore');
 
@@ -20,6 +21,7 @@ export default class Chat extends React.Component {
         name: '',
       },
       isConnected: null,
+      image: null,
     };
 
     const firebaseConfig = {
@@ -51,6 +53,8 @@ export default class Chat extends React.Component {
             _id: data.user._id,
             name: data.user.name,
           },
+          image: data.image || null,
+          location: data.location || null,
         });
       });
       this.setState({
@@ -129,14 +133,6 @@ export default class Chat extends React.Component {
           }
         });
       }
-    //     if (this.state.isConnected === true) {
-        
-
-    // } 
-    // else {
-    //   this.getMessages();
-    // }
-// }
 
 
     componentWillUnmount() {
@@ -167,9 +163,11 @@ export default class Chat extends React.Component {
       this.referenceChatMessages.add({
         uid: this.state.uid,
         _id: message._id,
-        text: message.text,
+        text: message.text || '', 
         createdAt: message.createdAt,
         user: message.user,
+        image: message.image || null,
+        location: message.location || null,
       });
     }; 
 
@@ -198,23 +196,50 @@ export default class Chat extends React.Component {
         }
       }
 
+      renderCustomActions = (props) => <CustomActions {...props} />;
+
+      renderCustomView (props) {
+        const { currentMessage} = props;
+        if (currentMessage.location) {
+          return (
+              <MapView
+                style={{width: 150,
+                  height: 100,
+                  borderRadius: 13,
+                  margin: 3}}
+                region={{
+                  latitude: currentMessage.location.latitude,
+                  longitude: currentMessage.location.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              />
+          );
+        }
+        return null;
+      }
+
+
     
     render() {
       let { color, name } = this.props.route.params;
 
         return (
-          <View style={[{ backgroundColor: color }, styles.outerView ]}>            
-            <GiftedChat
-              renderBubble={this.renderBubble.bind(this)}
-              renderInputToolbar={this.renderInputToolbar.bind(this)}
-              messages={this.state.messages}
-              onSend={(messages) => this.onSend(messages)}
-              user={{
-                _id: this.state.user._id, name: name }}
-            />
-            { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
-            </View>
-
+          <>
+            <View style={[{ backgroundColor: color }, styles.outerView ]}>            
+              <GiftedChat
+                renderBubble={this.renderBubble.bind(this)}
+                renderInputToolbar={this.renderInputToolbar.bind(this)}
+                renderActions={this.renderCustomActions.bind(this)}
+                renderCustomView={this.renderCustomView}
+                messages={this.state.messages}
+                onSend={(messages) => this.onSend(messages)}
+                user={{
+                  _id: this.state.user._id, name: name }}
+              />
+              { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
+              </View>
+            </>
         );
     }
 
